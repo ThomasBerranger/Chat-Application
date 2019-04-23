@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,6 +37,30 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ChatRoom", mappedBy="users")
+     */
+    private $chatRooms;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="author")
+     */
+    private $messages;
+
+
+    public function __construct()
+    {
+        $this->created_at = new DateTime();
+        $this->chatRooms = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -111,5 +138,76 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ChatRoom[]
+     */
+    public function getChatRooms(): Collection
+    {
+        return $this->chatRooms;
+    }
+
+    public function addChatRoom(ChatRoom $chatRoom): self
+    {
+        if (!$this->chatRooms->contains($chatRoom)) {
+            $this->chatRooms[] = $chatRoom;
+            $chatRoom->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChatRoom(ChatRoom $chatRoom): self
+    {
+        if ($this->chatRooms->contains($chatRoom)) {
+            $this->chatRooms->removeElement($chatRoom);
+            $chatRoom->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getAuthor() === $this) {
+                $message->setAuthor(null);
+            }
+        }
+
+        return $this;
     }
 }
