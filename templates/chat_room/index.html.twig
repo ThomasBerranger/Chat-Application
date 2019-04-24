@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ChatRoom index{% endblock %}
+
+{% block body %}
+    <h1>ChatRoom index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Created_at</th>
+                <th>Name</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for chat_room in chat_rooms %}
+            <tr>
+                <td>{{ chat_room.id }}</td>
+                <td>{{ chat_room.createdAt ? chat_room.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ chat_room.name }}</td>
+                <td>
+                    <a href="{{ path('chat_room_show', {'id': chat_room.id}) }}">show</a>
+                    <a href="{{ path('chat_room_edit', {'id': chat_room.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('chat_room_new') }}">Create new</a>
+{% endblock %}

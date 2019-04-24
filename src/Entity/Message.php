@@ -24,6 +24,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $author;
 

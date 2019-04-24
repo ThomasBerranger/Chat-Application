@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ChatRoom{% endblock %}
+
+{% block body %}
+    <h1>Create new ChatRoom</h1>
+
+    {{ include('chat_room/_form.html.twig') }}
+
+    <a href="{{ path('chat_room_index') }}">back to list</a>
+{% endblock %}
