@@ -1,0 +1,8 @@
+{% block body %}
+
+    {% for message in messages %}
+        {{ message.author.email }} : {{ message.content }}
+        <hr>
+    {% endfor %}
+
+{% endblock %}

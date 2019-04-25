@@ -30,22 +30,38 @@
 
     <br><br>
     <h3>Messages :</h3>
-    {% for message in chat_room.messages %}
-        {{ message.author.email }} : {{ message.content }}
-        <hr>
-    {% endfor %}
-
+    <a id="refresh" href="{{ path('message_chatroom_show', {'id': chat_room.id}) }}">Refresh</a>
+    <div id="messages">
+        {{ render(controller('App\\Controller\\MessageController::chatRoomMessagesShow', {'id': chat_room.id})) }}
+    </div>
 
 {% endblock %}
 
 {% block javascripts %}
     <script>
-        const url = new URL('http://localhost:3000/hub');
-        url.searchParams.append('topic', 'http://site.com/ping');
-        const eventSource = new EventSource(url);
-        eventSource.onmessage = e => {
-            var hr = document.querySelectorAll('hr');
-            hr[hr.length-1].insertAdjacentHTML('afterend', `bg@gmail.com : ping!`);
-        };
+        $( document ).ready(function() {
+
+            const url = new URL('http://localhost:3000/hub');
+            url.searchParams.append('topic', 'http://site.com/ping');
+            const eventSource = new EventSource(url);
+            eventSource.onmessage = e => {
+                refreshMessages();
+            };
+
+            $('#refresh').on('click', function (e) {
+                e.preventDefault();
+                refreshMessages();
+
+            });
+
+            function refreshMessages() {
+                $('#messages').fadeOut('slow', function(){
+                    $('#messages').load($('#refresh').attr('href'), function(){
+                        $('#messages').fadeIn('slow');
+                    });
+                });
+            }
+
+        });
     </script>
 {% endblock %}

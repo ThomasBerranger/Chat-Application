@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ChatRoom;
 use App\Entity\Message;
 use App\Form\MessageType;
 use App\Repository\MessageRepository;
@@ -61,6 +62,18 @@ class MessageController extends AbstractController
     {
         return $this->render('message/show.html.twig', [
             'message' => $message,
+        ]);
+    }
+
+    /**
+     * @Route("/chatroom/{id}", name="message_chatroom_show", methods={"GET"})
+     */
+    public function chatRoomMessagesShow(ChatRoom $chatRoom): Response
+    {
+        $messages = $this->getDoctrine()->getRepository(Message::class)->findBy(['chatRoom' => $chatRoom],['created_at' => 'asc']);
+
+        return $this->render('message/chatRoomMessagesShow.html.twig', [
+            'messages' => $messages,
         ]);
     }
 
