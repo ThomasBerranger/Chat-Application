@@ -1,2 +1,2 @@
 ## Chat-Application
-**Created from Symfony 4.7 with Mercure protocol.**
+**Created from Symfony 4.2 with Mercure protocol.**
